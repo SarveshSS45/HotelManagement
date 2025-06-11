@@ -1,0 +1,1294 @@
+﻿   @model OrderListViewModel
+@{
+    ViewData["Title"] = "Orders - Hotel Management System";
+}
+
+<style>
+    /* CSS Custom Properties (Variables) */
+    :root {
+        --primary: #8b5cf6;
+        --primary-dark: #5b21b6;
+        --primary-light: #ede9fe;
+        --primary-darker: #4c1d95;
+        --primary-accent: #a78bfa;
+        --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --white: #ffffff;
+        --bg-light: #f8fafc;
+        --border: #e2e8f0;
+        --success: #059669;
+        --warning: #d97706;
+        --danger: #dc2626;
+        --shadow-sm: 0 2px 4px rgba(139, 92, 246, 0.1);
+        --shadow-md: 0 4px 15px rgba(139, 92, 246, 0.15);
+        --shadow-lg: 0 10px 40px rgba(139, 92, 246, 0.2);
+        --shadow-xl: 0 20px 60px rgba(139, 92, 246, 0.25);
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --transition-bounce: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        --border-radius: 16px;
+        --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    /* Base Styles */
+    * { transition: var(--transition); }
+    
+    body {
+        background: linear-gradient(135deg, var(--bg-light) 0%, #f1f5f9 100%);
+        font-family: var(--font-family);
+        color: var(--text-primary);
+        line-height: 1.6;
+    }
+
+    /* Layout Components */
+    .page-header {
+        background: var(--gradient-primary);
+        color: var(--white);
+        padding: 3rem 0;
+        margin: -2rem -15px 3rem -15px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="%23ffffff" stroke-width="1" opacity="0.1"/></pattern></defs><rect width="60" height="60" fill="url(%23grid)"/></svg>');
+        opacity: 0.2;
+    }
+
+    .page-header-content { position: relative; z-index: 2; }
+
+    .page-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        animation: slideInLeft 0.8s ease-out;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin: 0;
+        animation: slideInLeft 0.8s ease-out 0.2s both;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    /* Statistics Bar */
+    .stats-bar {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-lg);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        animation: fadeInUp 0.8s ease-out 0.3s both;
+        border: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        background: linear-gradient(135deg, var(--primary-light) 0%, rgba(167, 139, 250, 0.1) 100%);
+        transition: var(--transition-bounce);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stat-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.1), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .stat-item:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-item:hover::before { left: 100%; }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: var(--gradient-primary);
+        border-radius: var(--border-radius);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-size: 1.5rem;
+        transition: var(--transition-bounce);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .stat-item:hover .stat-icon {
+        transform: rotate(10deg) scale(1.1);
+        box-shadow: var(--shadow-md);
+    }
+
+    .stat-content h4 {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--primary-dark);
+        margin: 0;
+        background: var(--gradient-primary);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stat-content p {
+        margin: 0;
+        color: var(--text-secondary);
+        font-size: 0.95rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    /* Orders Container */
+    .orders-container {
+        background: var(--white);
+        border-radius: 24px;
+        box-shadow: var(--shadow-lg);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+        border: 1px solid rgba(139, 92, 246, 0.08);
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, var(--primary-light) 0%, rgba(167, 139, 250, 0.3) 100%);
+        padding: 2rem;
+        border-bottom: 2px solid rgba(139, 92, 246, 0.1);
+        position: relative;
+    }
+
+    .table-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: var(--gradient-primary);
+    }
+
+    .table-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    /* Search and Filter Bar */
+    .search-filter-bar {
+        background: linear-gradient(135deg, #fafbff 0%, #f3f4f6 100%);
+        padding: 2rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .search-box { position: relative; max-width: 450px; }
+
+    .search-input {
+        width: 100%;
+        padding: 1rem 1.5rem 1rem 3.5rem;
+        border: 2px solid var(--border);
+        border-radius: var(--border-radius);
+        font-size: 1rem;
+        transition: var(--transition);
+        background: var(--white);
+        box-shadow: var(--shadow-sm);
+        font-weight: 500;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15), var(--shadow-sm);
+        transform: translateY(-2px);
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--primary);
+        font-size: 1.1rem;
+        transition: var(--transition);
+    }
+
+    .search-input:focus + .search-icon {
+        color: var(--primary-dark);
+        transform: translateY(-50%) rotate(90deg);
+    }
+
+    /* Buttons */
+    .btn-primary {
+        background: var(--gradient-primary);
+        color: var(--white);
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: var(--border-radius);
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        transition: var(--transition-bounce);
+        box-shadow: var(--shadow-md);
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-primary::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.6s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: var(--shadow-xl);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    .btn-primary:hover::before { left: 100%; }
+
+    .filter-btn {
+        padding: 0.75rem 1.5rem;
+        border: 2px solid var(--border);
+        background: var(--white);
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: var(--transition-bounce);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .filter-btn.active {
+        background: var(--gradient-primary);
+        border-color: var(--primary);
+        color: var(--white);
+        transform: scale(1.05);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .filter-btn:hover:not(.active) {
+        border-color: var(--primary);
+        color: var(--primary);
+        transform: translateY(-2px);
+        background: var(--primary-light);
+    }
+
+    /* Table Styles */
+    .orders-table {
+        margin: 0;
+        border: none;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .orders-table thead th {
+        background: var(--gradient-primary);
+        color: var(--white);
+        border: none;
+        width: 1400px;
+        padding: 1.5rem 1rem;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+        transition: var(--transition);
+    }
+
+    .orders-table thead th:hover {
+        background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
+        transform: translateY(-2px);
+    }
+
+    .orders-table tbody td {
+        max-width: 1400px;
+        padding: 2rem;
+        border-bottom: 1px solid rgba(139, 92, 246, 0.1);
+        vertical-align: middle;
+        font-size: 1rem;
+        transition: var(--transition);
+    }
+
+    .orders-table tbody tr {
+            max-width: 1400px;
+        transition: var(--transition);
+        cursor: pointer;
+        position: relative;
+    }
+
+    /* .orders-table tbody tr::before { */
+    /*     content: ''; */
+    /*     position: absolute; */
+    /*     left: 0; */
+    /*     top: 0; */
+    /*     bottom: 0; */
+    /*     width: 4px; */
+    /*     background: var(--gradient-primary); */
+    /*     transform: scaleY(0); */
+    /*     transition: var(--transition); */
+    /* } */
+
+    .orders-table tbody tr:hover {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(167, 139, 250, 0.03) 100%);
+        transform: translateX(8px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .orders-table tbody tr:hover::before { transform: scaleY(1); }
+
+    /* Table Content Styles */
+    .order-id {
+        font-weight: 800;
+        color: var(--primary-dark);
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.1rem;
+    }
+
+    .order-badge {
+        background: var(--gradient-primary);
+        color: var(--white);
+        padding: 0.4rem 1rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .customer-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .customer-avatar {
+        width: 50px;
+        height: 50px;
+        background: var(--gradient-primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--white);
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: var(--transition-bounce);
+        box-shadow: var(--shadow-sm);
+        border: 3px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .customer-avatar:hover {
+        transform: scale(1.15) rotate(10deg);
+        box-shadow: var(--shadow-md);
+    }
+
+    .customer-name {
+        font-weight: 700;
+        color: var(--text-primary);
+        font-size: 1.05rem;
+    }
+
+    .customer-subtitle {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    .order-date {
+        color: var(--text-primary);
+        font-weight: 600;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        flex-direction: column;
+    }
+
+    .date-badge {
+        background: linear-gradient(135deg, var(--primary-light) 0%, rgba(167, 139, 250, 0.2) 100%);
+        color: var(--primary-dark);
+        padding: 0.4rem 0.8rem;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .total-amount {
+        font-weight: 800;
+        font-size: 1.3rem;
+        color: var(--success);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+
+    .action-btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: var(--transition-bounce);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .action-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .action-btn:hover::before { left: 100%; }
+
+    .btn-edit {
+        background: linear-gradient(135deg, var(--warning) 0%, #f59e0b 100%);
+        color: var(--white);
+    }
+
+    .btn-details {
+        background: var(--gradient-primary);
+        color: var(--white);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, var(--danger) 0%, #ef4444 100%);
+        color: var(--white);
+    }
+
+    .action-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: var(--shadow-md);
+        color: var(--white);
+        text-decoration: none;
+    }
+
+    /* Empty State */
+    .empty-state {
+        text-align: center;
+        padding: 5rem 2rem;
+        color: var(--text-secondary);
+    }
+
+    .empty-icon {
+        font-size: 5rem;
+        color: var(--primary);
+        margin-bottom: 2rem;
+        opacity: 0.7;
+    }
+
+    /* Pagination */
+    .modern-pagination {
+        background: var(--white);
+        border-radius: 20px;
+        padding: 2rem;
+        box-shadow: var(--shadow-lg);
+        margin-top: 2rem;
+        border: 1px solid rgba(139, 92, 246, 0.1);
+    }
+
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .pagination-info {
+        color: var(--text-secondary);
+        font-size: 1rem;
+        font-weight: 600;
+        background: var(--primary-light);
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        border: 1px solid rgba(139, 92, 246, 0.2);
+    }
+
+    .modern-pagination .pagination {
+        margin: 0;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .modern-pagination .page-link {
+        border: 2px solid var(--border);
+        color: var(--text-secondary);
+        background: var(--white);
+        border-radius: 12px;
+        padding: 0.75rem 1.25rem;
+        font-weight: 700;
+        transition: var(--transition-bounce);
+        text-decoration: none;
+        min-width: 50px;
+        text-align: center;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .modern-pagination .page-link:hover {
+        border-color: var(--primary);
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: var(--shadow-md);
+    }
+
+    .modern-pagination .page-item.active .page-link {
+        background: var(--gradient-primary);
+        border-color: var(--primary);
+        color: var(--white);
+        box-shadow: var(--shadow-md);
+        transform: scale(1.1);
+    }
+
+    /* Loading Overlay */
+    .loading-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(139, 92, 246, 0.1);
+        backdrop-filter: blur(8px);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        opacity: 0;
+        visibility: hidden;
+        transition: var(--transition);
+    }
+
+    .loading-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .loading-spinner {
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(139, 92, 246, 0.3);
+        border-top: 4px solid var(--primary);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    /* Utilities */
+    .filter-buttons { display: flex; gap: 0.75rem; margin-left: 1rem; flex-wrap: wrap; }
+    .status-filter { display: flex; align-items: center; gap: 1rem; margin-left: auto; }
+    .status-dropdown { padding: 0.75rem 1.5rem; border: 2px solid var(--border); border-radius: 12px; background: var(--white); color: var(--text-secondary); font-weight: 600; cursor: pointer; transition: var(--transition); box-shadow: var(--shadow-sm); }
+    .status-dropdown:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.15); color: var(--primary-dark); }
+
+    /* Animations */
+    @@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @@keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+    @@keyframes slideInLeft { from { opacity: 0; transform: translateX(-40px); } to { opacity: 1; transform: translateX(0); } }
+    @@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    /* Print styles */
+    @@media print {
+        .page-header, .search-filter-bar, .action-buttons, .modern-pagination, .btn-primary { display: none !important; }
+        .orders-container { box-shadow: none; border: 1px solid #000; }
+        .orders-table { font-size: 12px; }
+        body { background: white !important; }
+    }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .page-title { font-size: 2rem; }
+        .stats-bar { grid-template-columns: 1fr; gap: 1rem; }
+        .search-filter-bar { padding: 1rem; }
+        .filter-buttons, .status-filter { display: none; }
+        .orders-table { font-size: 0.9rem; }
+        .orders-table tbody td { padding: 1rem; }
+    }
+</style>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container page-header-content">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="page-title">
+                    <i class="fas fa-shopping-cart"></i>
+                    Orders
+                </h1>
+                <p class="page-subtitle">Manage and track all customer orders efficiently</p>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <i class="fas fa-receipt" style="font-size: 4rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Bar -->
+<div class="stats-bar">
+    <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+        <div class="stat-content">
+            <h4>@(Model.Orders?.Count() ?? 0)</h4>
+            <p>Total Orders</p>
+        </div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-indian-rupee-sign"></i></div>
+        <div class="stat-content">
+            <h4>@(Model.Orders?.Sum(x => x.TotalAmount).ToString("C") ?? "₹0.00")</h4>
+            <p>Total Revenue</p>
+        </div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+        <div class="stat-content">
+            <h4>@(Model.Orders?.Where(x => x.OrderDate.Date == DateTime.Today).Count() ?? 0)</h4>
+            <p>Today's Orders</p>
+        </div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-content">
+            <h4>@(Model.Orders?.Any() == true ? (Model.Orders.Sum(x => x.TotalAmount) / Model.Orders.Count()).ToString("C") : "$0.00")</h4>
+            <p>Avg Order Value</p>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Container -->
+<div class="orders-container">
+    <!-- Table Header -->
+    <div class="table-header">
+        <h2 class="table-title">
+            <i class="fas fa-list-alt"></i>
+            Order Management System
+        </h2>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="search-filter-bar">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Search orders..." id="orderSearch">
+                </div>
+                <div class="filter-buttons d-none d-md-flex">
+                    <button class="filter-btn active" data-filter="all">All Orders</button>
+                    <button class="filter-btn" data-filter="today">Today</button>
+                    <button class="filter-btn" data-filter="week">This Week</button>
+                    <button class="filter-btn" data-filter="month">This Month</button>
+                </div>
+            </div>
+            <div class="col-md-6 text-md-end">
+                <div class="status-filter d-none d-md-flex">
+                    <label for="statusFilter">Status:</label>
+                    <select id="statusFilter" class="status-dropdown">
+                        <option value="all">All Status</option>
+                        <option value="pending">Pending</option>
+                        <option value="processing">Processing</option>
+                        <option value="completed">Completed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <a asp-action="Create" class="btn-primary">
+                    <i class="fas fa-plus"></i>
+                    Create New Order
+                </a>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Orders Table -->
+    @if (Model.Orders != null && Model.Orders.Any())
+    {
+        <div class="table-responsive">
+            <table class="table orders-table" role="table" aria-label="Orders list">
+                <thead>
+                    <tr role="row">
+                        <th class="sortable" data-column="orderId" tabindex="0" role="columnheader" aria-sort="none">
+                            <i class="fas fa-hashtag me-2"></i>Order ID
+                        </th>
+                        <th class="sortable" data-column="customer" tabindex="0" role="columnheader" aria-sort="none">
+                            <i class="fas fa-user me-2"></i>Customer
+                        </th>
+                        <th class="sortable" data-column="date" tabindex="0" role="columnheader" aria-sort="none">
+                            <i class="fas fa-calendar me-2"></i>Order Date
+                        </th>
+                        <th class="sortable" data-column="amount" tabindex="0" role="columnheader" aria-sort="none">
+                            <i class="fas fa-indian-rupee-sign me-2"></i>Total Amount
+                        </th>
+                        <th role="columnheader">
+                            <i class="fas fa-cogs me-2"></i>Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="ordersTableBody">
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr class="order-row" role="row" data-order-id="@order.OrderId" data-order-date="@order.OrderDate.ToString("yyyy-MM-dd")" data-customer-name="@(order.Customer?.Name ?? "Unknown")" data-amount="@order.TotalAmount">
+                            <td role="gridcell">
+                                <div class="order-id">
+                                    <i class="fas fa-receipt"></i>
+                                    #@order.OrderId
+                                    <span class="order-badge">New</span>
+                                </div>
+                            </td>
+                            <td role="gridcell">
+                                <div class="customer-info">
+                                    <div class="customer-avatar" title="@(order.Customer?.Name ?? "Unknown Customer")">
+                                        @(order.Customer?.Name?.Substring(0, 1).ToUpper() ?? "?")
+                                    </div>
+                                    <div class="customer-details">
+                                        <div class="customer-name">@(order.Customer?.Name ?? "Unknown Customer")</div>
+                                        <div class="customer-subtitle">Customer ID: @(order.Customer?.CustomerId ?? 0)</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td role="gridcell">
+                                <div class="order-date">
+                                    <i class="fas fa-calendar-alt me-2 text-muted"></i>
+                                    <time datetime="@order.OrderDate.ToString("yyyy-MM-dd")">@order.OrderDate.ToString("MMM dd, yyyy")</time>
+                                    <span class="date-badge">@order.OrderDate.ToString("HH:mm")</span>
+                                </div>
+                            </td>
+                            <td role="gridcell">
+                                <div class="total-amount">
+                                    @* <i class="fas fa-indian-rupee-sign amount-icon"></i> *@
+                                    @order.TotalAmount.ToString("C")
+                                </div>
+                            </td>
+                            <td role="gridcell">
+                                <div class="action-buttons">
+                                    <a asp-action="Edit" asp-route-id="@order.OrderId" class="action-btn btn-edit" role="button" aria-label="Edit order @order.OrderId">
+                                        <i class="fas fa-edit"></i>Edit
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@order.OrderId" class="action-btn btn-details" role="button" aria-label="View details for order @order.OrderId">
+                                        <i class="fas fa-eye"></i>Details
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@order.OrderId" class="action-btn btn-delete" role="button" aria-label="Delete order @order.OrderId" data-confirm-message="Are you sure you want to delete order #@order.OrderId?">
+                                        <i class="fas fa-trash"></i>Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state" role="status" aria-live="polite">
+            <i class="fas fa-shopping-cart empty-icon" aria-hidden="true"></i>
+            <h3>No Orders Found</h3>
+            <p>Start by creating your first order in the system.</p>
+            <a asp-action="Create" class="create-order-btn mt-3" role="button">
+                <i class="fas fa-plus"></i>
+                Create First Order
+            </a>
+        </div>
+    }
+</div>
+
+<!-- Modern Pagination -->
+@if (Model.TotalPages > 1)
+{
+    <div class="modern-pagination">
+        <div class="pagination-wrapper">
+            <div class="pagination-info" role="status" aria-live="polite">
+                Showing @((Model.CurrentPage - 1) * Model.PageSize + 1) to @(Math.Min(Model.CurrentPage * Model.PageSize, Model.Orders.Count())) of @Model.Orders.Count() orders
+            </div>
+            <nav aria-label="Orders pagination">
+                <ul class="pagination" role="list">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage - 1, pageSize = Model.PageSize })" aria-label="Go to previous page">
+                                <i class="fas fa-chevron-left" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                    }
+
+                    @for (int i = Math.Max(1, Model.CurrentPage - 2); i <= Math.Min(Model.TotalPages, Model.CurrentPage + 2); i++)
+                    {
+                        <li class="page-item @(i == Model.CurrentPage ? "active" : "")" role="listitem">
+                            <a class="page-link" href="@Url.Action("Index", new { page = i, pageSize = Model.PageSize })" aria-label="Go to page @i" @(i == Model.CurrentPage ? "aria-current=\"page\"" : "")>@i</a>
+                        </li>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { page = Model.CurrentPage + 1, pageSize = Model.PageSize })" aria-label="Go to next page">
+                                <i class="fas fa-chevron-right" aria-hidden="true"></i>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+        </div>
+    </div>
+}
+
+<script>
+    class OrdersManager {
+        constructor() {
+            this.searchInput = document.getElementById('orderSearch');
+            this.tableRows = document.querySelectorAll('.order-row');
+            this.filterButtons = document.querySelectorAll('.filter-btn');
+            this.statusFilter = document.getElementById('statusFilter');
+            this.sortableHeaders = document.querySelectorAll('.sortable');
+            this.loadingOverlay = document.getElementById('loadingOverlay');
+            this.currentSort = { column: null, direction: 'asc' };
+
+            this.init();
+        }
+
+        init() {
+            this.setupSearch();
+            this.setupFilters();
+            this.setupSorting();
+            this.setupActionButtons();
+            this.setupKeyboardNavigation();
+            this.animateStats();
+        }
+
+        setupSearch() {
+            if (this.searchInput) {
+                // Debounce search for better performance
+                let searchTimeout;
+                this.searchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimeout);
+                    searchTimeout = setTimeout(() => {
+                        this.performSearch(e.target.value);
+                    }, 300);
+                });
+
+                // Clear search with Escape key
+                this.searchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        e.target.value = '';
+                        this.performSearch('');
+                    }
+                });
+            }
+        }
+
+        performSearch(searchTerm) {
+            const term = searchTerm.toLowerCase().trim();
+            let visibleCount = 0;
+
+            this.tableRows.forEach(row => {
+                const orderId = row.querySelector('.order-id').textContent.toLowerCase();
+                const customerName = row.querySelector('.customer-name').textContent.toLowerCase();
+                const totalAmount = row.querySelector('.total-amount').textContent.toLowerCase();
+
+                const isVisible = !term ||
+                    orderId.includes(term) ||
+                    customerName.includes(term) ||
+                    totalAmount.includes(term);
+
+                if (isVisible) {
+                    row.style.display = '';
+                    row.style.animation = 'fadeIn 0.3s ease';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Update results counter
+            this.updateResultsCounter(visibleCount);
+        }
+
+        setupFilters() {
+            // Date filter buttons
+            this.filterButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    this.setActiveFilter(e.target);
+                    this.applyDateFilter(e.target.getAttribute('data-filter'));
+                });
+
+                // Keyboard support
+                button.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        button.click();
+                    }
+                });
+            });
+
+            // Status filter
+            if (this.statusFilter) {
+                this.statusFilter.addEventListener('change', (e) => {
+                    this.applyStatusFilter(e.target.value);
+                });
+            }
+        }
+
+        setActiveFilter(activeButton) {
+            this.filterButtons.forEach(btn => {
+                btn.classList.remove('active');
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            activeButton.classList.add('active');
+            activeButton.setAttribute('aria-pressed', 'true');
+        }
+
+        applyDateFilter(filter) {
+            const today = new Date();
+            let visibleCount = 0;
+
+            this.tableRows.forEach(row => {
+                const orderDateStr = row.getAttribute('data-order-date');
+                const orderDate = new Date(orderDateStr);
+                let shouldShow = true;
+
+                switch(filter) {
+                    case 'today':
+                        shouldShow = orderDate.toDateString() === today.toDateString();
+                        break;
+                    case 'week':
+                        const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        shouldShow = orderDate >= weekAgo;
+                        break;
+                    case 'month':
+                        shouldShow = orderDate.getMonth() === today.getMonth() &&
+                                   orderDate.getFullYear() === today.getFullYear();
+                        break;
+                    case 'all':
+                    default:
+                        shouldShow = true;
+                }
+
+                if (shouldShow) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            this.updateResultsCounter(visibleCount);
+        }
+
+        applyStatusFilter(status) {
+            // This would be implemented based on your actual status system
+            // For now, we'll show all orders since status isn't in the current data model
+            let visibleCount = 0;
+            this.tableRows.forEach(row => {
+                row.style.display = '';
+                visibleCount++;
+            });
+            this.updateResultsCounter(visibleCount);
+        }
+
+        setupSorting() {
+            this.sortableHeaders.forEach(header => {
+                header.addEventListener('click', () => {
+                    this.sortTable(header);
+                });
+
+                header.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.sortTable(header);
+                    }
+                });
+            });
+        }
+
+        sortTable(header) {
+            const column = header.getAttribute('data-column');
+            let direction = 'asc';
+
+            // Reset other headers
+            this.sortableHeaders.forEach(h => {
+                if (h !== header) {
+                    h.classList.remove('sort-asc', 'sort-desc');
+                    h.setAttribute('aria-sort', 'none');
+                }
+            });
+
+            // Determine sort direction
+            if (this.currentSort.column === column) {
+                direction = this.currentSort.direction === 'asc' ? 'desc' : 'asc';
+            }
+
+            this.currentSort = { column, direction };
+
+            // Update header appearance
+            header.classList.remove('sort-asc', 'sort-desc');
+            header.classList.add(`sort-${direction}`);
+            header.setAttribute('aria-sort', direction === 'asc' ? 'ascending' : 'descending');
+
+            // Sort rows
+            const tbody = document.getElementById('ordersTableBody');
+            const rows = Array.from(tbody.querySelectorAll('.order-row'));
+
+            rows.sort((a, b) => {
+                let aVal, bVal;
+
+                switch(column) {
+                    case 'orderId':
+                        aVal = parseInt(a.getAttribute('data-order-id'));
+                        bVal = parseInt(b.getAttribute('data-order-id'));
+                        break;
+                    case 'customer':
+                        aVal = a.getAttribute('data-customer-name').toLowerCase();
+                        bVal = b.getAttribute('data-customer-name').toLowerCase();
+                        break;
+                    case 'date':
+                        aVal = new Date(a.getAttribute('data-order-date'));
+                        bVal = new Date(b.getAttribute('data-order-date'));
+                        break;
+                    case 'amount':
+                        aVal = parseFloat(a.getAttribute('data-amount'));
+                        bVal = parseFloat(b.getAttribute('data-amount'));
+                        break;
+                    default:
+                        return 0;
+                }
+
+                if (aVal < bVal) return direction === 'asc' ? -1 : 1;
+                if (aVal > bVal) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+
+            // Re-append sorted rows
+            rows.forEach(row => tbody.appendChild(row));
+
+            // Add animation
+            rows.forEach((row, index) => {
+                setTimeout(() => {
+                    row.style.animation = 'fadeInUp 0.3s ease';
+                }, index * 50);
+            });
+        }
+
+        setupActionButtons() {
+            const actionButtons = document.querySelectorAll('.action-btn');
+
+            actionButtons.forEach(button => {
+                // Delete confirmation
+                if (button.classList.contains('btn-delete')) {
+                    button.addEventListener('click', (e) => {
+                        const message = button.getAttribute('data-confirm-message');
+                        if (!confirm(message)) {
+                            e.preventDefault();
+                        }
+                    });
+                } else {
+                    // Loading state for other buttons
+                    button.addEventListener('click', (e) => {
+                        this.showLoadingState(button);
+                    });
+                }
+            });
+        }
+
+        setupKeyboardNavigation() {
+            // Navigate table rows with arrow keys
+            document.addEventListener('keydown', (e) => {
+                if (e.target.closest('.orders-table')) {
+                    const currentRow = document.activeElement.closest('tr');
+                    if (!currentRow) return;
+
+                    const rows = Array.from(document.querySelectorAll('.order-row'));
+                    const currentIndex = rows.indexOf(currentRow);
+
+                    switch(e.key) {
+                        case 'ArrowDown':
+                            e.preventDefault();
+                            const nextRow = rows[currentIndex + 1];
+                            if (nextRow) nextRow.focus();
+                            break;
+                        case 'ArrowUp':
+                            e.preventDefault();
+                            const prevRow = rows[currentIndex - 1];
+                            if (prevRow) prevRow.focus();
+                            break;
+                    }
+                }
+            });
+
+            // Make table rows focusable
+            this.tableRows.forEach(row => {
+                row.setAttribute('tabindex', '0');
+                row.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        const detailsBtn = row.querySelector('.btn-details');
+                        if (detailsBtn) detailsBtn.click();
+                    }
+                });
+            });
+        }
+
+        showLoadingState(button) {
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Loading...';
+            button.style.pointerEvents = 'none';
+            button.setAttribute('disabled', 'true');
+
+            // Reset after timeout (in case navigation fails)
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.style.pointerEvents = '';
+                button.removeAttribute('disabled');
+            }, 5000);
+        }
+
+        showLoading() {
+            this.loadingOverlay.classList.add('active');
+        }
+
+        hideLoading() {
+            this.loadingOverlay.classList.remove('active');
+        }
+
+        updateResultsCounter(count) {
+            // This could be used to show filtered results count
+            const total = this.tableRows.length;
+            if (count !== total) {
+                console.log(`Showing ${count} of ${total} orders`);
+            }
+        }
+
+        animateStats() {
+            // Animate stat numbers on page load
+            const statNumbers = document.querySelectorAll('.stat-content h4[data-count]');
+
+            statNumbers.forEach(stat => {
+                const finalValue = parseInt(stat.getAttribute('data-count'));
+                if (isNaN(finalValue)) return;
+
+                let currentValue = 0;
+                const increment = Math.max(1, Math.ceil(finalValue / 50));
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        currentValue = finalValue;
+                        clearInterval(timer);
+                    }
+                    stat.textContent = currentValue.toLocaleString();
+                }, 30);
+            });
+        }
+
+        // Export functionality
+        exportToCSV() {
+            const visibleRows = Array.from(this.tableRows).filter(row =>
+                row.style.display !== 'none'
+            );
+
+            const csvContent = [
+                ['Order ID', 'Customer', 'Date', 'Amount'].join(','),
+                ...visibleRows.map(row => [
+                    row.getAttribute('data-order-id'),
+                    `"${row.getAttribute('data-customer-name')}"`,
+                    row.getAttribute('data-order-date'),
+                    row.getAttribute('data-amount')
+                ].join(','))
+            ].join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `orders-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Print functionality
+        printTable() {
+            window.print();
+        }
+    }
+
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        new OrdersManager();
+    });
+
+    // Add export and print buttons functionality if they exist
+    document.addEventListener('click', (e) => {
+        if (e.target.matches('[data-action="export"]')) {
+            new OrdersManager().exportToCSV();
+        }
+        if (e.target.matches('[data-action="print"]')) {
+            new OrdersManager().printTable();
+        }
+    });
+</script>

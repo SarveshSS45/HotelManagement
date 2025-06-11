@@ -1,0 +1,531 @@
+﻿@{
+    ViewData["Title"] = "Dashboard - Hotel Management System";
+}
+
+<style>
+    .hero-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 4rem 0;
+        margin: -2rem -15px 3rem -15px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%23ffffff" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .stats-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stats-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .stats-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+        }
+
+    .stats-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #e11d48;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .stats-label {
+        color: #64748b;
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        letter-spacing: 0.5px;
+    }
+
+    .stats-icon {
+        font-size: 3rem;
+        color: #ddd6fe;
+        margin-bottom: 1rem;
+        display: block;
+    }
+
+    .feature-card {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        height: 100%;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+            color: inherit;
+        }
+
+    .feature-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+        color: #1e293b;
+    }
+
+    .feature-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #1e293b;
+    }
+
+    .feature-description {
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-link {
+        color: #e11d48;
+        font-weight: 500;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .feature-link:hover {
+            color: #be185d;
+            gap: 1rem;
+        }
+
+    .quick-actions {
+        background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+        border-radius: 20px;
+        padding: 2rem;
+        margin: 3rem 0;
+    }
+
+        .quick-actions h3 {
+            color: #1e293b;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+    .action-btn {
+        background: white;
+        border: none;
+        border-radius: 12px;
+        padding: 1rem 1.5rem;
+        margin: 0.5rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: #1e293b;
+        font-weight: 500;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            color: #e11d48;
+            text-decoration: none;
+        }
+
+    .recent-activity {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .activity-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item:hover {
+            background: rgba(221, 214, 254, 0.1);
+            border-radius: 8px;
+            margin: 0 -1rem;
+            padding: 1rem;
+        }
+
+    .activity-icon {
+        width: 40px;
+        height: 40px;
+        background: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        margin-right: 1rem;
+        font-size: 1rem;
+    }
+
+    .activity-content {
+        flex: 1;
+    }
+
+    .activity-title {
+        font-weight: 500;
+        color: #1e293b;
+        margin-bottom: 0.25rem;
+    }
+
+    .activity-time {
+        font-size: 0.875rem;
+        color: #64748b;
+    }
+
+    .welcome-message {
+        background: linear-gradient(135deg, #e11d48 0%, #be185d 100%);
+        color: white;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .welcome-message::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+    @@keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.5;
+        }
+
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+    }
+
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .performance-chart {
+        background: white;
+        border-radius: 16px;
+        padding: 2rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+
+    .chart-placeholder {
+        height: 200px;
+        background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #1e293b;
+        font-weight: 500;
+        margin-top: 1rem;
+    }
+
+    @@media (max-width: 768px) {
+        .hero-section {
+            padding: 2rem 0;
+            margin: -1rem -15px 2rem -15px;
+        }
+
+        .stats-number {
+            font-size: 2rem;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.5rem;
+        }
+
+        .dashboard-grid {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h1 class="display-4 fw-bold mb-4">Welcome to Hotel Management System</h1>
+                <p class="lead mb-4">Streamline your hotel operations with our comprehensive management solution. Monitor bookings, manage customers, track orders, and analyze performance all in one place.</p>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a href="/Order/Index" class="btn btn-light btn-lg">
+                        <i class="fas fa-plus me-2"></i>New Order
+                    </a>
+                    <a href="/Reports/DailySalesReport" class="btn btn-outline-light btn-lg">
+                        <i class="fas fa-chart-line me-2"></i>View Reports
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <i class="fas fa-hotel" style="font-size: 8rem; opacity: 0.3;"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Welcome Message -->
+<div class="welcome-message">
+    <div class="row align-items-center">
+        <div class="col-md-8">
+            <h3 class="mb-2">Good Morning, Admin!</h3>
+            <p class="mb-0">Here's what's happening at your hotel today. You have 5 new orders and 12 customers checked in.</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <i class="fas fa-sun fa-3x opacity-75"></i>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="row mb-5">
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <i class="fas fa-users stats-icon"></i>
+            <span class="stats-number">248</span>
+            <div class="stats-label">Total Customers</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <i class="fas fa-shopping-cart stats-icon"></i>
+            <span class="stats-number">156</span>
+            <div class="stats-label">Orders Today</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <i class="fas fa-utensils stats-icon"></i>
+            <span class="stats-number">42</span>
+            <div class="stats-label">Menu Items</div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card">
+            <i class="fas fa-dollar-sign stats-icon"></i>
+            <span class="stats-number">$12,450</span>
+            <div class="stats-label">Today's Revenue</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="quick-actions">
+    <h3><i class="fas fa-bolt me-2"></i>Quick Actions</h3>
+    <div class="text-center">
+        <a href="/Customer/Create" class="action-btn">
+            <i class="fas fa-user-plus"></i>Add Customer
+        </a>
+        <a href="/Order/Create" class="action-btn">
+            <i class="fas fa-shopping-cart"></i>New Order
+        </a>
+        <a href="/Menu/Create" class="action-btn">
+            <i class="fas fa-plus-circle"></i>Add Menu Item
+        </a>
+        <a href="/Reports/DailySalesReport" class="action-btn">
+            <i class="fas fa-chart-bar"></i>View Reports
+        </a>
+    </div>
+</div>
+
+<!-- Dashboard Grid -->
+<div class="dashboard-grid">
+    <!-- Recent Activity -->
+    <div class="recent-activity">
+        <h4 class="mb-4"><i class="fas fa-clock me-2 text-primary"></i>Recent Activity</h4>
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-user-plus"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-title">New customer registered</div>
+                <div class="activity-time">John Smith - 2 minutes ago</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-title">Order #1234 completed</div>
+                <div class="activity-time">Table 5 - 15 minutes ago</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-title">Menu item updated</div>
+                <div class="activity-time">Chicken Burger - 1 hour ago</div>
+            </div>
+        </div>
+        <div class="activity-item">
+            <div class="activity-icon">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="activity-content">
+                <div class="activity-title">Daily report generated</div>
+                <div class="activity-time">Sales Report - 2 hours ago</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Performance Chart -->
+    <div class="performance-chart">
+        <h4 class="mb-3"><i class="fas fa-chart-area me-2 text-primary"></i>Sales Performance</h4>
+        <div class="chart-placeholder">
+            <div class="text-center">
+                <i class="fas fa-chart-line fa-3x mb-3" style="color: #e11d48;"></i>
+                <p>Sales trends and analytics<br><small class="text-muted">Connect your analytics dashboard</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Feature Cards -->
+<div class="row mb-5">
+    <div class="col-lg-4 col-md-6 mb-4">
+        <a href="/Customer/Index" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <h3 class="feature-title">Customer Management</h3>
+            <p class="feature-description">Manage customer information, track preferences, and maintain detailed records for better service.</p>
+            <span class="feature-link">
+                Manage Customers <i class="fas fa-arrow-right"></i>
+            </span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <a href="/Menu/Index" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-utensils"></i>
+            </div>
+            <h3 class="feature-title">Menu Management</h3>
+            <p class="feature-description">Create and update menu items, set prices, manage categories, and track popular dishes.</p>
+            <span class="feature-link">
+                Manage Menu <i class="fas fa-arrow-right"></i>
+            </span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <a href="/Order/Index" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3 class="feature-title">Order Processing</h3>
+            <p class="feature-description">Handle orders efficiently, track order status, and ensure timely delivery to customers.</p>
+            <span class="feature-link">
+                Process Orders <i class="fas fa-arrow-right"></i>
+            </span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <a href="/Reports/DailySalesReport" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-bar"></i>
+            </div>
+            <h3 class="feature-title">Sales Reports</h3>
+            <p class="feature-description">Generate comprehensive reports, analyze sales trends, and make data-driven decisions.</p>
+            <span class="feature-link">
+                View Reports <i class="fas fa-arrow-right"></i>
+            </span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <a href="/Reports/MenuReport" class="feature-card">
+            <div class="feature-icon">
+                <i class="fas fa-chart-pie"></i>
+            </div>
+            <h3 class="feature-title">Menu Analytics</h3>
+            <p class="feature-description">Track menu item performance, identify bestsellers, and optimize your offerings.</p>
+            <span class="feature-link">
+                Menu Analytics <i class="fas fa-arrow-right"></i>
+            </span>
+        </a>
+    </div>
+    <div class="col-lg-4 col-md-6 mb-4">
+        <div class="feature-card" style="background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);">
+            <div class="feature-icon" style="background: white;">
+                <i class="fas fa-cog" style="color: #e11d48;"></i>
+            </div>
+            <h3 class="feature-title">System Settings</h3>
+            <p class="feature-description">Configure system preferences, manage user permissions, and customize your hotel operations.</p>
+            <span class="feature-link">
+                Coming Soon <i class="fas fa-lock"></i>
+            </span>
+        </div>
+    </div>
+</div>

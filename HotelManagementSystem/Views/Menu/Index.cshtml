@@ -1,0 +1,650 @@
+﻿@model IEnumerable<HotelManagementSystem.Models.Menu>
+
+@{
+    ViewData["Title"] = "Menu Items";
+}
+
+<style>
+    :root {
+        --background-gradient: linear-gradient(135deg, #8b5cf6 0%, #a855f7 50%, #9333ea 100%);
+        --white: #ffffff;
+        --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        min-height: 100vh;
+        color: #334155;
+    }
+
+    .hero-section {
+        background: var(--background-gradient);
+        color: var(--white);
+        padding: 4rem 0;
+        margin: -2rem -15px 3rem -15px;
+        border-radius: 0 0 30px 30px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: var(--shadow-xl);
+    }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="%23ffffff" stroke-width="1" opacity="0.1"/></pattern></defs><rect width="60" height="60" fill="url(%23grid)"/></svg>');
+            opacity: 0.2;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background: linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.1) 50%, transparent 100%);
+        }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.95;
+        margin-bottom: 0;
+        animation: slideInLeft 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.2s both;
+        font-weight: 300;
+        letter-spacing: 0.5px;
+    }
+
+    @@keyframes slideInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-50px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    .stats-container {
+        max-width: auto;
+        margin-top: 15px  ;
+        padding: 0 2rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 20px;
+        position: relative;
+        /* z-index: 10; */
+    }
+
+    .stat-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        transition: all 0.1s cubic-bezier(0.175, 0.885, 0.32, 1);
+        border: 1px solid rgba(147, 51, 234, 0.1);
+        position: relative;
+        overflow: hidden;
+    }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #9333ea, #a78bfa);
+            /* transform: scaleX(0); */
+            /* transition: transform 0.3s ease; */
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 30px 60px rgba(147, 51, 234, 0.15);
+        }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #9333ea, #a78bfa);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #9333ea;
+        margin-bottom: 0.5rem;
+        line-height: 1;
+    }
+
+    .stat-label {
+        color: #64748b;
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .menu-section {
+        max-width: 1400px;
+        margin-top: 30px ;
+        padding: 0 2rem;
+        z-index: 10;
+    }
+
+    .menu-header {
+        background: white;
+        padding: 2rem;
+        border-radius: 20px 20px 0 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .menu-title {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+        .menu-title i {
+            color: #9333ea;
+        }
+
+    .search-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+        max-width: 400px;
+        margin: 0 2rem;
+    }
+
+    .search-box {
+        position: relative;
+        flex: 1;
+    }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 48px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+            .search-box input:focus {
+                outline: none;
+                border-color: #9333ea;
+                box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1);
+                background: white;
+            }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+        }
+
+    .add-btn {
+        background: linear-gradient(135deg, #9333ea, #a78bfa);
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3);
+    }
+
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(147, 51, 234, 0.4);
+            color: white;
+            text-decoration: none;
+        }
+
+    .category-tabs {
+        background: white;
+        padding: 1rem 2rem 0;
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e2e8f0;
+    }
+
+    .tab {
+        padding: 12px 24px;
+        background: transparent;
+        border: none;
+        border-radius: 8px 8px 0 0;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: #64748b;
+    }
+
+        .tab.active {
+            background: #9333ea;
+            color: white;
+        }
+
+        .tab:hover:not(.active) {
+            background: #f1f5f9;
+            color: #334155;
+        }
+
+    .menu-table-container {
+        background: white;
+        border-radius: 0 0 20px 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .elegant-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .elegant-table thead {
+            background: linear-gradient(135deg, #9333ea, #a78bfa);
+            color: white;
+        }
+
+        .elegant-table th {
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+            text-align: left;
+            font-size: 1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .elegant-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+            .elegant-table tbody tr:hover {
+                background: linear-gradient(135deg, rgba(147, 51, 234, 0.05), rgba(167, 139, 250, 0.05));
+                transform: scale(1.01);
+            }
+
+        .elegant-table td {
+            padding: 1.5rem 2rem;
+            font-size: 1rem;
+            color: #334155;
+        }
+
+    .item-name {
+        font-weight: 600;
+        color: #1e293b;
+    }
+
+    .item-price {
+        font-weight: 700;
+        color: #9333ea;
+        font-size: 1.1rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+
+    .action-btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .btn-edit {
+        background: #f59e0b;
+        color: white;
+    }
+
+        .btn-edit:hover {
+            background: #d97706;
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-details {
+        background: #06b6d4;
+        color: white;
+    }
+
+        .btn-details:hover {
+            background: #0891b2;
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .btn-delete {
+        background: #ef4444;
+        color: white;
+    }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+            color: white;
+            text-decoration: none;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+
+    /* Responsive Design */
+    @@media (max-width: 768px) {
+        .hero-text h1
+
+    {
+        font-size: 2.5rem;
+    }
+
+    .stats-container {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin-top: -40px;
+    }
+
+    .menu-header {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+    }
+
+    .search-container {
+        margin: 0;
+        max-width: none;
+    }
+
+    .elegant-table {
+        font-size: 0.875rem;
+    }
+
+        .elegant-table th,
+        .elegant-table td {
+            padding: 1rem;
+        }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    }
+
+    /* Animation for page load */
+    @@keyframes fadeInUp {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+
+    .menu-section {
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    .stat-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+        .stat-card:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .stat-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .stat-card:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+</style>
+
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+</div>
+<!-- Hero Section -->
+<div class="hero-section">
+    <div class="container hero-content">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        <i class="fas fa-utensils"></i>
+                        Menu Items
+                    </h1>
+                    <p class="hero-subtitle">Manage your hotel restaurant menu and pricing with elegance</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-end">
+                <div class="hero-icon">
+                    <i class="fas fa-hamburger" style="font-size: 4rem; opacity: 0.3;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats Cards -->
+<div class="stats-container">
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-utensils"></i>
+        </div>
+        <div class="stat-number">@(Model?.Count() ?? 0)</div>
+        <div class="stat-label">Total Items</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-star"></i>
+        </div>
+        <div class="stat-number">4.8</div>
+        <div class="stat-label">Average Rating</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-indian-rupee-sign"></i>
+        </div>
+        @* <div class="stat-number">$@((Model?.Any() == true ? Model.Average(m => m.Price) : 0).ToString("F2"))</div> *@
+        @* <div class="stat-label">Avg Price</div> *@
+        <div class="stat-number">
+            ₹@(((decimal)(Model?.Any() == true ? Model.Average(m => m.Price) : 0)).ToString("F2"))
+        </div>
+        <div class="stat-label">Avg Price</div>
+
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon">
+            <i class="fas fa-clock"></i>
+        </div>
+        <div class="stat-number">@(Model?.Count(m => m.Price > (Model?.Average(x => x.Price) ?? 0)) ?? 0)</div>
+        <div class="stat-label">Popular Items</div>
+    </div>
+</div>
+
+<!-- Menu Section -->
+<div class="menu-section">
+    <div class="menu-header">
+        <div class="menu-title">
+            <i class="fas fa-clipboard-list"></i>
+            Restaurant Menu
+        </div>
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search menu items by name or price..." id="searchInput">
+            </div>
+        </div>
+        <a asp-action="Create" class="add-btn">
+            <i class="fas fa-plus"></i>
+            ADD NEW ITEM
+        </a>
+    </div>
+
+    <div class="category-tabs">
+        <button class="tab active">ALL ITEMS</button>
+        <button class="tab">APPETIZERS</button>
+        <button class="tab">MAIN COURSE</button>
+        <button class="tab">DESSERTS</button>
+        <button class="tab">BEVERAGES</button>
+    </div>
+
+    <div class="menu-table-container">
+        @if (Model?.Any() == true)
+        {
+            <table class="elegant-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-utensils"></i> Item Name</th>
+                        <th><i class="fas fa-tag"></i> Price</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="menuTableBody">
+                    @foreach (var item in Model)
+                    {
+                        <tr class="menu-row">
+                            <td class="item-name">@Html.DisplayFor(modelItem => item.ItemName)</td>
+                            <td class="item-price">₹@Html.DisplayFor(modelItem => item.Price)</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a asp-action="Edit" asp-route-id="@item.MenuId" class="action-btn btn-edit">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.MenuId" class="action-btn btn-details">
+                                        <i class="fas fa-eye"></i> Details
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.MenuId" class="action-btn btn-delete">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="fas fa-utensils"></i>
+                <h3>No menu items found</h3>
+                <p>Start by adding your first menu item to get started.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    // Search functionality
+    document.getElementById('searchInput').addEventListener('input', function(e) {
+        const searchTerm = e.target.value.toLowerCase();
+        const rows = document.querySelectorAll('.menu-row');
+
+        rows.forEach(row => {
+            const itemName = row.querySelector('.item-name').textContent.toLowerCase();
+            const itemPrice = row.querySelector('.item-price').textContent.toLowerCase();
+
+            if (itemName.includes(searchTerm) || itemPrice.includes(searchTerm)) {
+                row.style.display = '';
+                row.style.animation = 'fadeInUp 0.3s ease-out';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+
+    // Tab functionality (for future enhancement)
+    document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
