@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\HotelManagementSystem.API\HotelManagementSystem.API.csproj" />
+    <ProjectReference Include="..\HotelManagementSystem.API\DineEaseAPI.csproj" />
   </ItemGroup>
 
 </Project>
