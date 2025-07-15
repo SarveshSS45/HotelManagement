@@ -49,29 +49,31 @@ The project follows a **Core and MVC** architecture, ensuring a clean separation
 
 ## 📸 Project Snapshots
 
+## 📸 Project Snapshots
+
 ### 🏠 Homepage
 
-![Homepage](./wwwroot/asset/Homepage.png?raw=true "Homepage")
+![Homepage](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/Homepage.png "Homepage")
 
 ### 🧾 Customer Page
 
-![Customer Page](./wwwroot/asset/customer_page.png?raw=true "Customer Page")
+![Customer Page](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/customer_page.png "Customer Page")
 
 ### 🍽️ Menu Page
 
-![Menu](./wwwroot/asset/menu.png?raw=true "Menu Page")
+![Menu](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/menu.png "Menu")
 
 ### 📋 Order Page
 
-![Order](./wwwroot/asset/order.png?raw=true "Order Page")
+![Order](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/order.png "Order")
 
 ### 📊 Menu Report
 
-![Menu Report](./wwwroot/asset/menu_report.png?raw=true "Menu Report")
+![Menu Report](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/menu_report.png "Menu Report")
 
 ### 💵 Daily Sales Report
 
-![Daily Sales Report](./wwwroot/asset/daily_sales_report.png?raw=true "Sales Report")
+![Sales Report](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/daily_sales_report.png "Sales Report")
 
 ## Usage
 
