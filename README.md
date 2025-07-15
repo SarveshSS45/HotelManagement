@@ -51,27 +51,27 @@ The project follows a **Core and MVC** architecture, ensuring a clean separation
 
 ### 🏠 Homepage
 
-![Homepage](wwwroot/asset/Homepage.png)
+![Homepage](./wwwroot/asset/Homepage.png)
 
 ### 🧾 Customer Page
 
-![Customer Page](wwwroot/asset/customer_page.png)
+![Customer Page](./wwwroot/asset/customer_page.png)
 
 ### 🍽️ Menu Page
 
-![Menu](wwwroot/asset/menu.png)
+![Menu](./wwwroot/asset/menu.png)
 
 ### 📋 Order Page
 
-![Order](wwwroot/asset/order.png)
+![Order](./wwwroot/asset/order.png)
 
 ### 📊 Menu Report
 
-![Menu Report](wwwroot/asset/menu_report.png)
+![Menu Report](./wwwroot/asset/menu_report.png)
 
 ### 💵 Daily Sales Report
 
-![Daily Sales Report](wwwroot/asset/daily_sales_report.png)
+![Daily Sales Report](./wwwroot/asset/daily_sales_report.png)
 
 ## Usage
 
