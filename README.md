@@ -49,8 +49,6 @@ The project follows a **Core and MVC** architecture, ensuring a clean separation
 
 ## 📸 Project Snapshots
 
-## 📸 Project Snapshots
-
 ### 🏠 Homepage
 
 ![Homepage](https://raw.githubusercontent.com/SarveshSS45/HotelManagement/main/HotelManagementSystem/wwwroot/asset/Homepage.png "Homepage")
